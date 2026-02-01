@@ -1,0 +1,61 @@
+<odoo>
+  <data>
+
+    <!-- ===VISTA DE LISTA=== -->
+    <record model="ir.ui.view" id="lista_tareas_list_view">
+      <field name="name">Lista de Tareas - Lista</field>
+      <field name="model">lista_tareas.lista_tareas</field>
+      <field name="arch" type="xml">
+        <list string="Lista de Tareas" editable="bottom">
+          <field name="name" string="Tarea"/>
+          <field name="responsable_id"/>
+          <field name="prioridad" widget="badge"/>
+          <field name="estado" widget="badge"/>
+          <field name="fecha_limite"/>
+          <field name="atrasada" invisible="1"/>
+        </list>
+      </field>
+    </record>
+
+    <!-- ===VISTA DE FORMULARIO==== -->
+    <record id="lista_tareas_form_view" model="ir.ui.view">
+      <field name="name">lista_tareas.form</field>
+      <field name="model">lista_tareas.lista_tareas</field>
+      <field name="arch" type="xml">
+        <form string="Tarea">
+          <sheet>
+            <group>
+              <group>
+                <field name="name"/>
+                <field name="descripcion"/>
+                <field name="responsable_id"/>
+              </group>
+              <group>
+                <field name="prioridad"/>
+                <field name="estado"/>
+                <field name="fecha_limite"/>
+                <field name="atrasada" readonly="1"/>
+              </group>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- ===ACCIÓN DE VENTANA=== -->
+    <record id="lista_tareas_action" model="ir.actions.act_window">
+      <field name="name">Lista de Tareas</field>
+      <field name="res_model">lista_tareas.lista_tareas</field>
+      <field name="view_mode">list,form</field>
+      <field name="help" type="html">
+        <p>Gestiona tus tareas pendientes, con prioridad, fecha límite y estado.</p>
+      </field>
+    </record>
+
+    <!-- ===MENÚS=== -->
+    <menuitem name="Gestor de Tareas" id="menu_tareas_root"/>
+    <menuitem name="Mis Tareas" id="menu_tareas_main" parent="menu_tareas_root"/>
+    <menuitem name="Lista de Tareas" id="menu_tareas_list" parent="menu_tareas_main" action="lista_tareas_action"/>
+
+  </data>
+</odoo>

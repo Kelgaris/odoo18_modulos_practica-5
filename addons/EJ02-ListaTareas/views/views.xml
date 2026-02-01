@@ -1,0 +1,227 @@
+<!-- Declaración del archivo XML principal de vistas -->
+<odoo>
+  <data>
+
+    <!-- ==================================================
+         ACCIÓN PRINCIPAL DEL MÓDULO
+         ===================================================
+         Esta acción es la que se ejecutará cuando el usuario 
+         entre en el menú "Ver tareas".
+         Abre el modelo lista_tareas.lista mostrando sus vistas.
+    -->
+    <record model="ir.actions.act_window" id="action_lista_tareas">
+      <!-- Título visible de la ventana -->
+      <field name="name">Listado de tareas</field>
+
+      <!-- Modelo al que se refiere la acción -->
+      <field name="res_model">lista_tareas.lista</field>
+
+      <!-- Tipo de vistas que se mostrarán:
+           list → vista en tabla
+           form → vista en formulario -->
+      <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ==================================================
+         MENÚS DEL MÓDULO
+         ===================================================
+         Creamos la estructura jerárquica de menús en Odoo.
+         Esto permite al usuario acceder a las vistas.
+    -->
+
+    <!-- Menú raíz que aparece en la barra superior -->
+    <menuitem id="lista_tareas_menu_root" name="Listado de tareas" sequence="10"/>
+
+    <!-- Submenú dentro del menú raíz.
+         Permite agrupar más opciones si lo necesitas en el futuro. -->
+    <menuitem id="lista_tareas_menu_1" name="Gestión de tareas"
+              parent="lista_tareas_menu_root" sequence="20"/>
+
+    <!-- Opción final de menú que ejecuta la acción definida arriba.
+         Abre la interfaz con lista y formulario de tareas. -->
+    <menuitem id="lista_tareas_menu_1_list" name="Ver tareas"
+              parent="lista_tareas_menu_1" action="action_lista_tareas" sequence="30"/>
+
+    <!-- ==================================================
+         VISTA DE LISTA (list)
+         ===================================================
+         Muestra las tareas en forma de tabla.
+         Es la vista que se usa por defecto para ver varios registros.
+    -->
+    <record id="view_lista_tareas_list" model="ir.ui.view">
+      <!-- Nombre interno de la vista -->
+      <field name="name">lista.tareas.list</field>
+
+      <!-- Modelo al que pertenece esta vista -->
+      <field name="model">lista_tareas.lista</field>
+
+      <!-- Estructura XML de la vista -->
+      <field name="arch" type="xml">
+        <!-- Vista tipo list (reemplaza a <tree> en Odoo 17+) -->
+        <list string="Tareas" default_order="prioridad desc">
+          <!-- Campos que se muestran como columnas -->
+          <field name="tarea"/>         <!-- Nombre de la tarea -->
+          <field name="prioridad"/>     <!-- Nivel de prioridad -->
+          <field name="urgente"/>       <!-- Calculado automáticamente -->
+          <field name="fecha_asignada"/> <!-- FEcha asignada en el apartado 2 del ejercicio -->
+          <field name="realizada"/>     <!-- Estado de finalización -->
+        </list>
+      </field>
+    </record>
+
+    <!-- ==================================================
+         VISTA DE FORMULARIO (form)
+         ===================================================
+         Se usa al crear o editar una tarea.
+         Más amigable y detallada que la vista de lista.
+    -->
+    <record id="view_lista_tareas_form" model="ir.ui.view">
+      <field name="name">lista.tareas.form</field>
+      <field name="model">lista_tareas.lista</field>
+      <field name="arch" type="xml">
+        <form string="Tarea">
+          <!-- El contenedor visual principal del formulario -->
+          <sheet>
+            <!-- Primer bloque de campos (agrupados) -->
+            <group>
+              <field name="tarea"/>         <!-- Campo de nombre de tarea -->
+              <field name="realizada"/>     <!-- Campo para marcar como realizada -->
+              <field name="fecha_asignada"/> <!-- Campo de fecha asignada -->
+            </group>
+
+            <!-- Segundo bloque de campos (prioridad y urgencia) -->
+            <group string="Prioridad y urgencia">
+              <field name="prioridad"/>     <!-- Campo de prioridad editable -->
+
+              <!-- Campo calculado: no editable. Ya no usamos attrs (Odoo 17+) -->
+              <field name="urgente" readonly="1"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- ==================================================
+         VISTA DE BÚSQUEDA (search)
+         ===================================================
+         Aparece como la barra superior de búsqueda en la vista de lista.
+         Permite buscar y filtrar tareas por varios criterios.
+    -->
+    <record id="view_lista_tareas_search" model="ir.ui.view">
+      <field name="name">lista.tareas.search</field>
+      <field name="model">lista_tareas.lista</field>
+      <field name="arch" type="xml">
+        <search string="Buscar tareas">
+
+          <!-- Campo de búsqueda libre -->
+          <field name="tarea"/>
+
+          <!-- Filtros predefinidos -->
+          <filter name="filtro_urgente" string="Urgente"
+                  domain="[('urgente','=',True)]"/>
+
+          <filter name="filtro_realizada" string="Realizadas"
+                  domain="[('realizada','=',True)]"/>
+        </search>
+      </field>
+    </record>
+
+    <!-- ========================================================== 
+          VISTA KANBAN DE TAREAS (kanban)
+          ==========================================================
+          Muestra las tareas en formato Kanban. Cada tarea es una tarjeta
+          que se puede mover entre columnas según su estado.
+    -->
+    <record id="view_lista_tareas_kanban" model="ir.ui.view">
+      <field name="name">lista.tareas.kanban</field>
+      <field name="model">lista_tareas.lista</field>
+      <field name="arch" type="xml">
+        <kanban>
+          <field name="tarea"/>
+          <field name="prioridad"/>
+          <field name="urgente"/>
+          <field name="fecha_asignada"/>
+          <field name="realizada"/>
+
+          <templates>
+            <t t-name="kanban-box">
+              <div class="oe_kanban_card oe_kanban_global_click">
+                <strong><field name="tarea"/></strong>
+                <div>
+                  <span>Prioridad: <field name="prioridad"/></span><br/>
+                  <span>Urgente: <field name="urgente"/></span><br/>
+                  <span>Realizada: <field name="realizada"/></span>
+                  <span>Fecha Asignada: <field name="fecha_asignada"/></span>
+                </div>
+              </div>
+            </t>
+          </templates>
+        </kanban>
+      </field>
+    </record>
+
+    <!-- ==================================================
+         Accion para abrir la vista Kanban
+         ===================================================
+          Esta acción abre la vista Kanban de las tareas.
+    -->
+
+    <record id="action_lista_tareas_kanban" model="ir.actions.act_window">
+      <field name="name">Lista de Tareas (kanban)</field>
+      <field name="res_model">lista_tareas.lista</field>
+      <field name="view_mode">kanban,form</field>
+      <field name="context">{"kanban_view_ref":"lista_tareas.view_lista_tareas_kanban"}</field>
+    </record>
+
+    <!-- ==================================================
+         Menú para acceder a la vista Kanban
+         ===================================================
+          Añade una opción de menú para abrir la vista Kanban.
+    -->
+    <menuitem id="menu_lista_tareas_kanban"
+              name="Ver Tareas (kanban)"
+              parent="lista_tareas_menu_1"
+              action="action_lista_tareas_kanban"
+              sequence="40"/>
+
+    <!-- ==================================================
+         Vista Calendario de Tareas
+         ==================================================
+    -->
+    <record id="view_lista_tareas_calendar" model="ir.ui.view">
+      <field name="name">lista.tareas.calendar</field>
+      <field name="model">lista_tareas.lista</field>
+      <field name="arch" type="xml">
+        <calendar string="Calendario de Tareas" date_start="fecha_asignada">  
+          <field name="tarea"/>
+          <field name="prioridad"/>
+          <field name="realizada"/>
+        </calendar>
+      </field>
+    </record>
+
+    <!-- ==================================================
+         Acción para abrir la vista Calendario
+         ===================================================
+    -->
+
+    <record id="action_lista_tareas_calendario" model="ir.actions.act_window">
+      <field name="name">Lista de Tareas (calendario)</field>
+      <field name="res_model">lista_tareas.lista</field>
+      <field name="view_mode">calendar,form,list</field>
+      <field name="context">{"calendar_view_ref":"lista_tareas.view_lista_tareas_calendar"}</field>
+    </record>
+
+    <!-- ==================================================
+         Menú para acceder a la vista Calendario
+         ===================================================
+    -->
+
+    <menuitem id="menu_lista_tareas_calendario"
+              name="Ver Tareas (calendario)"
+              parent="lista_tareas_menu_1"
+              action="action_lista_tareas_calendario"
+              sequence="50"/>
+              
+  </data>
+</odoo>

@@ -1,0 +1,10 @@
+<!-- security/security.xml -->
+<odoo>
+    <record id="group_instituto_director" model="res.groups">
+        <field name="name">Director</field>
+    </record>
+
+    <record id="group_instituto_profesor" model="res.groups">
+        <field name="name">Profesor</field>
+    </record>
+</odoo>

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id='liga_partido_action' model='ir.actions.act_window'>
+        <field name="name">Partidos de la liga</field>
+        <!-- Indicamos vistas para este modelo (categoria) -->
+        <field name="res_model">liga.partido</field>
+        <!-- Indicamos que este modelo se puede ver en kanban, tree y form -->
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+
+    <menuitem name="Partidos de la liga" id="liga_partido_menu" parent="liga_base_menu" action="liga_partido_action" />
+
+    <menuitem name="Goles Locales (Gráfico)" id="liga_partido_graph_menu" 
+    parent="liga_base_menu" action="action_liga_partido_graph"/>
+
+    <!-- VISTA DE FORMULARIO -->
+    <record id="liga_partido_view_form" model="ir.ui.view">
+        <field name="name">Formulario Partidos</field>
+        <field name="model">liga.partido</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="equipo_casa" />
+                            <field name="goles_casa" />
+                        </group>
+
+                        <group>
+                            <field name="equipo_fuera" />
+                            <field name="goles_fuera" />
+                        </group>
+                    </group>
+                    <header>
+                        <button name="action_print_pdf"
+                                type="object"
+                                string="Generar PDF"
+                                class="btn-primary"
+                                display="always"/>
+                    </header>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista Tree -->
+    <record id="liga_partido_view_tree" model="ir.ui.view">
+        <field name="name">Lista de partidos de la liga</field>
+        <field name="model">liga.partido</field>
+        <field name="arch" type="xml">
+            <list>
+            <!-- CABECERA CON BOTONES -->
+                <header>
+                    <button name="incrementar_goles_locales"
+                            type="object"
+                            string="+2 goles locales"
+                            display="always"
+                            class="btn-primary"/>
+
+                    <button name="incrementar_goles_visitantes"
+                            type="object"
+                            display="always"
+                            string="+2 goles visitantes"
+                            class="btn-primary"/>
+
+                    <button name="%(action_liga_partido_wizard)d"
+                        string="Nuevo Partido"
+                        type="action"
+                        display="always"
+                        class="btn-primary"/>
+
+                </header>
+                <!-- Indicamos que atributos usaremos al hacer la vista Tree -->
+                <field name="equipo_casa" />
+                <field name="goles_casa" />
+                <field name="equipo_fuera" />
+                <field name="goles_fuera" />
+
+            </list>
+        </field>
+    </record>
+
+
+    <!-- Vista Kanban -->
+    <record id="liga_partido_view_kanban" model="ir.ui.view">
+        <field name="name">Lista de partidos de la liga</field>
+        <field name="model">liga.partido</field>
+        <field name="arch" type="xml">
+            <!-- Agrupamos por el atributo "parent_id"-->
+            <kanban>
+                <!-- Indicamos que atributos usaremos al hacer la vista Kanban -->
+                <header>
+                    <button name="incrementar_goles_locales"
+                            type="object"
+                            string="+2 goles locales"
+                            display="always"
+                            class="btn-primary"/>
+                    <button name="incrementar_goles_visitantes"
+                            type="object"
+                            string="+2 goles visitantes"
+                            display="always"
+                            class="btn-primary"/>
+                    <button name="%(action_liga_partido_wizard)d"
+                        string="Nuevo Partido"
+                        type="action"
+                        display="always"
+                        class="btn-primary"/>
+                </header>
+                <field name="equipo_casa" />
+                <field name="goles_casa" />
+                <field name="equipo_fuera" />
+                <field name="goles_fuera" />
+
+                <!-- Plantilla QWeb para indicar como es la tarjeta Kanban-->
+
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="oe_kanban_card">
+                                    <div class="text-muted">
+                                        <b>
+                                            <p>- Resultado -</p>
+                                        </b>
+                                    </div>
+                                    <div >
+                                        <field name="equipo_casa" /> :
+                                        <field name="goles_casa" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <field name="equipo_fuera" /> :
+                                    <field name="goles_fuera" />
+                                </div>
+                            </div>
+                        
+                        </div>
+                    </t>
+                </templates>
+
+            </kanban>
+        </field>
+    </record>
+
+    <record id="liga_partido_view_graph" model="ir.ui.view">
+        <field name="name">partidos.goles.local.graph</field>
+        <field name="model">liga.partido</field>
+        <field name="arch" type="xml">
+            <graph string="Goles de los equipos locales" type="bar">
+                <!-- eje x: equipo local -->
+                <field name="equipo_casa" type="row"/>
+                <!-- eje y: goles -->
+                <field name="goles_casa" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Acción para abrir la vista gráfica -->
+    <record id="action_liga_partido_graph" model="ir.actions.act_window">
+        <field name="name">Goles Locales</field>
+        <field name="res_model">liga.partido</field>
+        <field name="view_mode">graph</field>
+        <field name="view_id" ref="liga_partido_view_graph"/>
+    </record>
+
+</odoo>

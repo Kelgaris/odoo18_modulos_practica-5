@@ -1,0 +1,52 @@
+<!-- views/profesor.xml -->
+<odoo>
+    <!-- Vista árbol -->
+    <record id="view_profesor_list" model="ir.ui.view">
+        <field name="name">instituto.profesor.list</field>
+        <field name="model">instituto.profesor</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="especialidad"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vista formulario -->
+    <record id="view_profesor_form" model="ir.ui.view">
+        <field name="name">instituto.profesor.form</field>
+        <field name="model">instituto.profesor</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="especialidad"/>
+                    </group>
+                    <notebook>
+                        <page string="Módulos">
+                            <field name="modulo_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="ciclo_id"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Acción -->
+    <record id="action_profesores" model="ir.actions.act_window">
+        <field name="name">Profesores</field>
+        <field name="res_model">instituto.profesor</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menú -->
+    <menuitem id="menu_profesores" name="Profesores"
+              parent="menu_instituto_root"
+              action="action_profesores"/>
+</odoo>

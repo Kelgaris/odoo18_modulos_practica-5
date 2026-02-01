@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_liga_partido_pdf">
+        <t t-call="web.basic_layout">
+            <t t-foreach="docs" t-as="partido">
+                <div class="page">
+                    <h2>Partido de la liga</h2>
+                    <p><strong>Equipo local:</strong> <t t-esc="partido.equipo_casa.nombre"/></p>
+                    <p><strong>Goles local:</strong> <t t-esc="partido.goles_casa"/></p>
+                    <p><strong>Equipo visitante:</strong> <t t-esc="partido.equipo_fuera.nombre"/></p>
+                    <p><strong>Goles visitante:</strong> <t t-esc="partido.goles_fuera"/></p>
+                    
+                    <h3>Resultado:</h3>
+                    <p>
+                        <t t-esc="
+                            'Ganador: ' + partido.equipo_casa.nombre
+                            if partido.goles_casa &gt; partido.goles_fuera
+                            else 'Ganador: ' + partido.equipo_fuera.nombre
+                            if partido.goles_casa &lt; partido.goles_fuera
+                            else 'Empate'
+                        "/>
+                    </p>
+                    <p><strong>Puntos extra ganador:</strong> <t t-esc="partido.puntos_extra_ganador"/></p>
+                    <p><strong>Puntos extra perdedor:</strong> <t t-esc="partido.puntos_extra_perdedor"/></p>
+                    <p><strong>Goleada detectada:</strong> <t t-esc="partido.goleada_detectada"/></p>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <report
+        id="action_report_liga_partido"
+        model="liga.partido"
+        string="Partido PDF"
+        report_type="qweb-pdf"
+        name="liga.report_liga_partido_pdf"
+        file="liga.report_liga_partido_pdf"
+        print_report_name="Partido_%(object.id)s"
+    />
+</odoo>
